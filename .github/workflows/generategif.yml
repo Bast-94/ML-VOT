@@ -32,7 +32,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          sudo -H pip3 install pandas imageio tqdm opencv-python numpy matplotlib collection
+         pip install pandas imageio tqdm opencv-python numpy matplotlib collection
       - name : generate data
         run: |
           make full_run
