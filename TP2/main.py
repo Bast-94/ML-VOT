@@ -50,6 +50,8 @@ img_file_list = img_file_list[:nb_frame]
 
 threshold = 0.5
 cur_id = 0
+
+
 for n_frame, img_file in tqdm(enumerate(img_file_list, start=1)):
     img_index = n_frame - 1
     img_file = img_file_list[img_index]
