@@ -12,11 +12,13 @@ import imageio
 
 
 class Tracker:
+    
     def __init__(self, det_file: str, img_file_list: list):
         self.det_df = load_det_file(det_file)
         self.cur_id = 0
         self.img_file_list = img_file_list
         self.result_df = None
+
 
     def print_info(self):
         print(f"nb frame: {len(self.img_file_list)}")

@@ -24,7 +24,7 @@ if response.status_code == 200:
     resp = response.json()
     artifacts = resp["artifacts"]
     print([artifact["id"] for artifact in artifacts])
-    print(artifacts)
+    
 else:
     # Print the error message if the request was not successful
     print(f"Error: {response.status_code} - {response.text}")
