@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from tqdm import tqdm
+from src.argparser import get_args
 
 from src.iou import BoundingBox, intersection_box, iou
 from src.tracker import Tracker
@@ -42,11 +43,9 @@ BOUNDING_BOX_DIR = "ADL-Rundle-6/bounding_boxes"
 IMG_DIR = "ADL-Rundle-6/img1"
 IMG_FILE_LIST = sorted(os.listdir(IMG_DIR))
 
-arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("-n", "--n-frame", type=int, default=1, help="Frame number")
-arg_parser.add_argument("-g", "--gif", action="store_true", help="Create gif")
 
-args = arg_parser.parse_args()
+
+args = get_args()
 nb_frame = args.n_frame
 save_gif = args.gif
 img_file_list = IMG_FILE_LIST[:nb_frame]
@@ -56,3 +55,4 @@ cur_id = 0
 
 tracker = Tracker(det_file, img_file_list)
 tracker.print_info()
+
