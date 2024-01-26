@@ -1,6 +1,6 @@
 import os
 
-from src.argparser import get_args
+from src.track_parser import get_args
 from src.tracker import Tracker
 from src.hungarian_tracker import HungarianTracker
 
