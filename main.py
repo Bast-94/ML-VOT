@@ -1,6 +1,6 @@
 import os
 
-from src.track_parser import get_args
+from src.parsers import get_track_args
 from src.tracker import Tracker
 from src.hungarian_tracker import HungarianTracker
 
@@ -14,7 +14,7 @@ DET_FILE = (
     else "ADL-Rundle-6/det/det.txt"
 )
 
-args = get_args()
+args = get_track_args()
 nb_frame = args.n_frame
 save_gif = args.gif
 img_file_list = IMG_FILE_LIST[:nb_frame]
