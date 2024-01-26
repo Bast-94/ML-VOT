@@ -1,5 +1,6 @@
 import argparse
 
+
 def get_args():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("-n", "--n-frame", type=int, default=1, help="Frame number")
