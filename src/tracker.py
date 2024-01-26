@@ -9,16 +9,15 @@ from src.utils import load_det_file
 
 BOUNDING_BOX_DIR = "./ADL-Rundle-6/bounding_boxes"
 import imageio
+import numpy as np
 
 
 class Tracker:
-    
     def __init__(self, det_file: str, img_file_list: list):
         self.det_df = load_det_file(det_file)
         self.cur_id = 0
         self.img_file_list = img_file_list
         self.result_df = None
-
 
     def print_info(self):
         print(f"nb frame: {len(self.img_file_list)}")
@@ -34,14 +33,43 @@ class Tracker:
             frame_data["bb_height"][row],
         )
 
+    def similarity_matrix(
+        self,n_frame:int = None, frame_data: pd.DataFrame=None, next_frame_data: pd.DataFrame=None
+    ):
+        if frame_data is None or next_frame_data is None:
+            if n_frame is None:
+                raise ValueError("n_frame or frame_data and next_frame_data must be set")
+            frame_data = self.get_frame(n_frame)
+            next_frame_data = self.get_frame(n_frame + 1)
+        
+        similarity_matrix = np.zeros((len(frame_data), len(next_frame_data)))
+        for i, row1 in enumerate(frame_data.index):
+            bb1 = self.get_bound_box(frame_data, row1)
+            for j, row2 in enumerate(next_frame_data.index):
+                bb2 = self.get_bound_box(next_frame_data, row2)
+                similarity_matrix[i, j] = iou(bb1, bb2)
+        similarity_matrix_df = pd.DataFrame(similarity_matrix)
+        similarity_matrix_df.index = frame_data.index
+        similarity_matrix_df.columns = next_frame_data.index
+        return similarity_matrix_df
+
+    """def _iou_tracking(self, output_csv: str, threshold: float = 0.5):
+        self.result_df = self.det_df.copy()
+        for n_frame, img_file in tqdm(enumerate(self.img_file_list, start=1)):
+            
+            similarity_matrix_df = self.similarity_matrix(n_frame)
+
+
+        self.result_df.to_csv(output_csv, index=False)"""
+
     def iou_tracking(self, output_csv: str, threshold: float = 0.5):
         self.result_df = self.det_df.copy()
         for n_frame, img_file in tqdm(enumerate(self.img_file_list, start=1)):
             frame_data = self.get_frame(n_frame)
             next_frame_data = self.get_frame(n_frame + 1)
-            for i, row1 in enumerate(frame_data.index):
+            for row1 in (frame_data.index):
                 best_iou = 0
-                for j, row2 in enumerate(next_frame_data.index):
+                for row2 in (next_frame_data.index):
                     bb1 = self.get_bound_box(frame_data, row1)
                     bb2 = self.get_bound_box(next_frame_data, row2)
                     iou_score = iou(bb1, bb2)
@@ -51,6 +79,7 @@ class Tracker:
                         self.cur_id += 1
                     if iou_score >= threshold and iou_score > best_iou:
                         self.result_df.loc[row2, "id"] = self.result_df.loc[row1, "id"]
+                        best_iou = iou_score
 
         self.result_df.to_csv(output_csv, index=False)
 
