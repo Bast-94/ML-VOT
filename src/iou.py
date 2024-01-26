@@ -1,6 +1,7 @@
 from collections import namedtuple
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import Rectangle
 
 BoundingBox = namedtuple("BoundingBox", ("bb_left", "bb_top", "bb_width", "bb_height"))
@@ -32,6 +33,70 @@ def iou(bb1, bb2):
     bb2_area = bb2.bb_width * bb2.bb_height
     union_area = bb1_area + bb2_area - intersection_area
     return intersection_area / union_area
+
+
+def plot_bounding_boxes(bb1: BoundingBox, bb2: BoundingBox, ax: plt.Axes):
+    """
+    Plots two bounding boxes
+    :param bb1: bounding box 1
+    :param bb2: bounding box 2
+    :return: None
+    """
+    if ax is None:
+        fig, ax = plt.subplots(1)
+
+    ax.set_xlim(
+        min(bb1.bb_left, bb2.bb_left) - 10,
+        max(bb1.bb_left + bb1.bb_width, bb2.bb_left + bb2.bb_width) + 10,
+    )
+    ax.set_ylim(
+        min(bb1.bb_top, bb2.bb_top) - 10,
+        max(bb1.bb_top + bb1.bb_height, bb2.bb_top + bb2.bb_height) + 10,
+    )
+    ax.add_patch(
+        Rectangle(
+            (bb1.bb_left, bb1.bb_top),
+            bb1.bb_width,
+            bb1.bb_height,
+            fill=False,
+            color="red",
+        )
+    )
+    ax.add_patch(
+        Rectangle(
+            (bb2.bb_left, bb2.bb_top),
+            bb2.bb_width,
+            bb2.bb_height,
+            fill=False,
+            color="blue",
+        )
+    )
+    iou_score = iou(bb1, bb2)
+    bb_intersection = intersection_box(bb1, bb2)
+    ax.add_patch(
+        Rectangle(
+            (bb_intersection.bb_left, bb_intersection.bb_top),
+            bb_intersection.bb_width,
+            bb_intersection.bb_height,
+            fill=True,
+            color="green",
+        )
+    )
+    ax.set_title(f"IoU: {iou_score:.2f}")
+
+
+def similarity_matrix_iou(bb_list1: list[BoundingBox], bb_list2: list[BoundingBox]):
+    """
+    Computes the similarity matrix between two lists of bounding boxes
+    :param bb_list1: list of bounding boxes
+    :param bb_list2: list of bounding boxes
+    :return: similarity matrix
+    """
+    sim_matrix = np.zeros((len(bb_list1), len(bb_list2)))
+    for i, bb1 in enumerate(bb_list1):
+        for j, bb2 in enumerate(bb_list2):
+            sim_matrix[i, j] = iou(bb1, bb2)
+    return sim_matrix
 
 
 if __name__ == "__main__":
