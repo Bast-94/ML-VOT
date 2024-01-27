@@ -1,11 +1,13 @@
 import os
+import sys
+
+import numpy as np
+from scipy.optimize import linear_sum_assignment
 
 from src.hungarian_tracker import HungarianTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
-import sys
-import numpy as np
-from scipy.optimize import linear_sum_assignment
+
 BOUNDING_BOX_DIR = "ADL-Rundle-6/bounding_boxes"
 IMG_DIR = "ADL-Rundle-6/img1"
 IMG_FILE_LIST = sorted(os.listdir(IMG_DIR))
@@ -29,11 +31,11 @@ if args.hungarian:
     similarity_matrix_df = 1 - similarity_matrix_df
     cost = similarity_matrix_df.to_numpy()
     row_ind, col_ind = linear_sum_assignment(cost)
-    
-    #sys.exit()
+
+    # sys.exit()
 else:
     print("Using greedy algorithm")
     tracker = Tracker(DET_FILE, img_file_list)
 tracker.print_info()
 tracker.iou_tracking("produced/h_tracking.csv")
-#tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)
+# tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)

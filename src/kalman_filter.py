@@ -1,15 +1,32 @@
 import numpy as np
 
 
+def get_Q(dt:float, std_acc:float):
+    return np.array(
+        [
+            [(dt**4) / 4, 0, (dt**3) / 2, 0],
+            [0, (dt**4) / 4, 0, (dt**3) / 2],
+            [(dt**3) / 2, 0, dt**2, 0],
+            [0, (dt**3) / 2, 0, dt**2],
+        ]
+    ) * std_acc**2
+
 class KalmanFilter:
     def __init__(
-        self, dt: float, u_x: float, u_y: float, x_std_meas: float, y_std_meas: float
+        self,
+        dt: float,
+        u_x: float,
+        u_y: float,
+        std_acc: float,
+        x_std_meas: float,
+        y_std_meas: float,
     ):
         self.dt = dt
         self.u_x = u_x
         self.u_y = u_y
-        self.std_acc_x = y_std_meas
-        self.std_acc_y = x_std_meas
+        self.std_acc_x = x_std_meas
+        self.std_acc_y = y_std_meas
+        self.std_acc = std_acc
         self.time_state = 0
         self.x = np.array([[0, 0, 0, 0]]).T
         self.A = np.array(
@@ -24,22 +41,12 @@ class KalmanFilter:
             ]
         )
         self.H = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
-        self.Q = (
-            np.array(
-                [
-                    [(self.dt**4) / 4, 0, (self.dt**3) / 2, 0],
-                    [0, (self.dt**4) / 4, 0, (self.dt**3) / 2],
-                    [(self.dt**3) / 2, 0, self.dt**2, 0],
-                    [0, (self.dt**3) / 2, 0, self.dt**2],
-                ]
-            )
-            * self.std_acc_x**2
-        )
+        self.Q = get_Q(self.dt, self.std_acc)
         self.R = np.array([[self.std_acc_x**2, 0], [0, self.std_acc_y**2]])
-        self.P = np.eye(self.A.shape[1])
+        self.P = np.eye(self.A.shape[0])
 
     def predict(self):
-        self.x = np.dot(self.A, self.x_k) + np.dot(
+        self.x = np.dot(self.A, self.x) + np.dot(
             self.B, np.array([[self.u_x, self.u_y]]).T
         )
         self.P = np.dot(np.dot(self.A, self.P), self.A.T) + self.Q
@@ -47,7 +54,13 @@ class KalmanFilter:
         return self.x
 
     def update(self, z):
-        S = np.dot(np.dot(self.H, self.P), self.H.T) + self.R
-        K = np.dot(np.dot(self.P, self.H.T), np.linalg.inv(S))
-        self.x = (self.x + np.dot(K, (z - np.dot(self.H, self.x))), 2)
-        self.P = self.P - np.dot(np.dot(K, self.H), self.P)
+        if z.shape == (2,):
+            z = z.reshape(-1, 1)
+
+        S = self.R + self.H @ self.P @ self.H.T
+        K = self.P @ self.H.T @ np.linalg.inv(S)
+        self.x = self.x + K @ (z - self.H @ self.x)
+        self.P = (np.eye(self.P.shape[0]) - K @ self.H) @ self.P
+        self.S = S
+        self.K = K
+        return self.x.T

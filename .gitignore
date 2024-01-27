@@ -6,3 +6,4 @@ ADL-Rundle-6/bounding_boxes/
 
 __pycache__
 secretdir/
+tests.py
