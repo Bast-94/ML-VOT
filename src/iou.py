@@ -12,6 +12,8 @@ def print_bounding_box(bb):
         f"bb_left: {bb.bb_left}, bb_top: {bb.bb_top}, bb_width: {bb.bb_width}, bb_height: {bb.bb_height}"
     )
 
+def centroid(bb:BoundingBox):
+    return np.array([bb.bb_left + bb.bb_width/2, bb.bb_top + bb.bb_height/2])
 
 def intersection_box(bb1, bb2):
     bb_left = max(bb1.bb_left, bb2.bb_left)

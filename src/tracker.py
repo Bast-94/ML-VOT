@@ -58,6 +58,10 @@ class Tracker:
 
     def iou_tracking(self, output_csv: str):
         self.result_df = self.det_df.copy()
+        first_frame = self.get_frame(self.frame_idx)
+        for row in first_frame.index:
+            self.result_df.loc[row, "id"] = self.cur_id
+            self.cur_id += 1
         while self.frame_idx < len(self.img_file_list):
             self.iou_perframe()
             self.next_frame()
