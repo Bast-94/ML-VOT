@@ -12,7 +12,7 @@ kalman:
 
 full_run:
 	mkdir ADL-Rundle-6/bounding_boxes/
-	python main.py -H -n  -g -a
+	python main.py -H  -g -a
 
 reformat:
 	python -m black .
