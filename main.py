@@ -19,14 +19,20 @@ DET_FILE = (
     if os.path.exists("ADL-Rundle-6/det/clean_det.csv")
     else "ADL-Rundle-6/det/det.txt"
 )
-cap = cv2.VideoCapture("ADL-Rundle-6/img1/%06d.jpg")
+OUTPUT_DIR = "produced"
+OUTPUT_CSV = "produced/h_tracking.csv"
+OUTPUT_VIDEO = "produced/output.avi"
+
 args = get_track_args()
 nb_frame = args.n_frame
-save_gif = args.gif
+
 save_video = args.video
+
 if args.all:
     nb_frame = len(IMG_FILE_LIST)
 img_file_list = IMG_FILE_LIST[:nb_frame]
+
+
 if args.hungarian:
     print("Using Hungarian algorithm")
     tracker = HungarianTracker(DET_FILE, img_file_list)
@@ -35,15 +41,16 @@ if args.hungarian:
 else:
     print("Using greedy algorithm")
     tracker = Tracker(DET_FILE, img_file_list)
+
+
 tracker.print_info()
-tracker.iou_tracking("produced/h_tracking.csv")
-if save_gif:
-    tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)
+tracker.iou_tracking(OUTPUT_CSV)
+
 
 if save_video:
-    print("Generating video", "ADL-Rundle-6/img1/%06d.jpg")
+    print("Generating video")
     generate_video(
-        output_file="produced/output.avi",
+        output_file=OUTPUT_VIDEO,
         file_name_pattern="ADL-Rundle-6/img1/%06d.jpg",
         tracker=tracker,
         max_frame=nb_frame,
