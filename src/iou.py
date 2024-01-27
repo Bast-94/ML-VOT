@@ -6,11 +6,14 @@ from matplotlib.patches import Rectangle
 
 BoundingBox = namedtuple("BoundingBox", ("bb_left", "bb_top", "bb_width", "bb_height"))
 
+
 def bb_to_np(bb: BoundingBox):
     return np.array([bb.bb_left, bb.bb_top, bb.bb_width, bb.bb_height])
 
+
 def np_to_bb(np_bb: np.ndarray):
     return BoundingBox(np_bb[0], np_bb[1], np_bb[2], np_bb[3])
+
 
 def print_bounding_box(bb):
     print(
@@ -21,10 +24,12 @@ def print_bounding_box(bb):
 def centroid(bb: BoundingBox):
     return np.array([bb.bb_left + bb.bb_width / 2, bb.bb_top + bb.bb_height / 2])
 
+
 def distance(bb1: BoundingBox, bb2: BoundingBox):
     return np.linalg.norm(centroid(bb1) - centroid(bb2))
 
-def bb_with_dim_and_centroid(center:np.ndarray, width:int, height:int):
+
+def bb_with_dim_and_centroid(center: np.ndarray, width: int, height: int):
     assert width > 0 and height > 0
     assert center.shape == (2,)
     return BoundingBox(center[0] - width / 2, center[1] - height / 2, width, height)
@@ -43,7 +48,7 @@ def intersection_box(bb1, bb2):
     return BoundingBox(bb_left, bb_top, bb_right - bb_left, bb_bottom - bb_top)
 
 
-def iou(bb1:BoundingBox, bb2:BoundingBox):
+def iou(bb1: BoundingBox, bb2: BoundingBox):
     intersection = intersection_box(bb1, bb2)
     intersection_area = intersection.bb_width * intersection.bb_height
     bb1_area = bb1.bb_width * bb1.bb_height

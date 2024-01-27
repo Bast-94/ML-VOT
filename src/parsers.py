@@ -6,13 +6,16 @@ def get_track_args():
     arg_parser.add_argument(
         "-n", "--n-frame", type=int, default=1, help="Number of frames to use"
     )
-    arg_parser.add_argument("-g", "--gif", action="store_true", help="Create gif")
+    subparsers = arg_parser.add_subparsers(dest="commands", required=False)
+    arg_parser.add_argument("-a", "--all", action="store_true", help="Use all frames")
+    arg_parser.add_argument("-v", "--video", action="store_true", help="Create video")
+    arg_parser.add_argument(
+        "-K", "--kalman", action="store_true", help="Use Kalman filter"
+    )
     arg_parser.add_argument(
         "-H", "--hungarian", action="store_true", help="Use Hungarian algorithm"
     )
-    arg_parser.add_argument("-a", "--all", action="store_true", help="Use all frames")
-    arg_parser.add_argument("-v", "--video", action="store_true", help="Create video")
-    arg_parser.add_argument('-K', '--kalman', action='store_true', help='Use Kalman filter')
+    subparsers.add_parser("test", help="Test")
     return arg_parser.parse_args()
 
 

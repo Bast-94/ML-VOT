@@ -56,15 +56,19 @@ class Tracker:
     def next_frame(self):
         self.frame_idx += 1
 
-    def iou_tracking(self, output_csv: str):
-        print("Tracking")
-        self.result_df = self.det_df.copy()
+    def init_first_frame(self):
         first_frame = self.get_frame(self.frame_idx)
         for row in first_frame.index:
             self.result_df.loc[row, "id"] = self.cur_id
             self.cur_id += 1
+
+    def iou_tracking(self, output_csv: str):
+        print("Tracking")
+        self.result_df = self.det_df.copy()
+        self.init_first_frame()
         for _ in tqdm(self.img_file_list):
             self.iou_perframe()
             self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False)
+        print(f"Tracking done, result saved in {output_csv}")

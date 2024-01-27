@@ -8,14 +8,18 @@ from scipy.optimize import linear_sum_assignment
 
 from src.config_manager import ConfigManager
 from src.hungarian_tracker import HungarianTracker
+from src.kalman_tracker import KalmanTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
 from src.video_generator import generate_video
-from src.kalman_tracker import KalmanTracker
 
 config = ConfigManager("config/config.yml")
 
 args = get_track_args()
+
+if args.commands == "test":
+    print("Test")
+    sys.exit(0)
 
 nb_frame = args.n_frame
 save_video = args.video

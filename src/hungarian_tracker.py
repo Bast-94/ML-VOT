@@ -13,7 +13,7 @@ class HungarianTracker(Tracker):
 
     def print_info(self):
         print("Hungarian Tracker")
-        
+
     def similarity_matrix(
         self,
         n_frame: int = None,
@@ -35,6 +35,8 @@ class HungarianTracker(Tracker):
                 bb2 = self.get_bounding_box(detections, row2)
                 similarity_matrix[i, j] = iou(bb1, bb2)
         return similarity_matrix
+    
+    
 
     def iou_perframe(self):
         tracks = self.get_frame(self.frame_idx)
