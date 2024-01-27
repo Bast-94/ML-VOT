@@ -27,7 +27,7 @@ class Tracker:
     def get_frame(self, n_frame: int):
         return self.det_df[self.det_df.frame == n_frame]
 
-    def get_bound_box(self, frame_data: pd.DataFrame, row: int):
+    def get_bounding_box(self, frame_data: pd.DataFrame, row: int):
         return BoundingBox(
             frame_data["bb_left"][row],
             frame_data["bb_top"][row],
@@ -42,8 +42,8 @@ class Tracker:
         for row1 in tracks.index:
             best_iou = 0
             for row2 in detections.index:
-                bb1 = self.get_bound_box(tracks, row1)
-                bb2 = self.get_bound_box(detections, row2)
+                bb1 = self.get_bounding_box(tracks, row1)
+                bb2 = self.get_bounding_box(detections, row2)
                 iou_score = iou(bb1, bb2)
 
                 if self.result_df.loc[row1, "id"] == -1:
@@ -56,7 +56,7 @@ class Tracker:
     def next_frame(self):
         self.frame_idx += 1
 
-    def iou_tracking(self, output_csv: str, threshold: float = 0.5):
+    def iou_tracking(self, output_csv: str):
         self.result_df = self.det_df.copy()
         while self.frame_idx < len(self.img_file_list):
             self.iou_perframe()
@@ -105,7 +105,7 @@ class Tracker:
             res_df = df[df["frame"] == n_frame]
             opencv_img = cv2.imread(os.path.join(img_dir, img_file))
             for row1 in res_df.index:
-                bb1 = self.get_bound_box(res_df, row1)
+                bb1 = self.get_bounding_box(res_df, row1)
                 id = res_df.loc[row1, "id"]
                 self.update_gif(
                     opencv_img=opencv_img,

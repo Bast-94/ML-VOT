@@ -27,14 +27,13 @@ class HungarianTracker(Tracker):
 
         similarity_matrix = np.zeros((len(tracks), len(detections)))
         for i, row1 in enumerate(tracks.index):
-            bb1 = self.get_bound_box(tracks, row1)
+            bb1 = self.get_bounding_box(tracks, row1)
             for j, row2 in enumerate(detections.index):
-                bb2 = self.get_bound_box(detections, row2)
+                bb2 = self.get_bounding_box(detections, row2)
                 similarity_matrix[i, j] = iou(bb1, bb2)
         return similarity_matrix
 
     def iou_perframe(self):
-        
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
         similarity_matrix = self.similarity_matrix(tracks=tracks, detections=detections)
@@ -49,3 +48,4 @@ class HungarianTracker(Tracker):
             if self.result_df.loc[row, "id"] == -1:
                 self.result_df.loc[row, "id"] = self.cur_id
                 self.cur_id += 1
+        return detections
