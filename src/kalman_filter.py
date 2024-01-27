@@ -1,25 +1,6 @@
 import numpy as np
 
-
-def get_Q(dt:float, std_acc:float):
-    return np.array(
-        [
-            [(dt**4) / 4, 0, (dt**3) / 2, 0],
-            [0, (dt**4) / 4, 0, (dt**3) / 2],
-            [(dt**3) / 2, 0, dt**2, 0],
-            [0, (dt**3) / 2, 0, dt**2],
-        ]
-    ) * std_acc**2
-
-def get_B(dt:float):
-    return np.array(
-        [
-            [(dt**2) / 2, 0],
-            [0, (dt**2) / 2],
-            [dt, 0],
-            [0, dt],
-        ]
-    )
+from src.kalman_matrices import get_A, get_B, get_H, get_Q, get_R,get_P
 
 class KalmanFilter:
     def __init__(
@@ -34,19 +15,16 @@ class KalmanFilter:
         self.dt = dt
         self.u_x = u_x
         self.u_y = u_y
-        self.std_acc_x = x_std_meas
-        self.std_acc_y = y_std_meas
-        self.std_acc = std_acc
+        
+        
         self.time_state = 0
         self.x = np.array([[0, 0, 0, 0]]).T
-        self.A = np.array(
-            [[1, 0, self.dt, 0], [0, 1, 0, self.dt], [0, 0, 1, 0], [0, 0, 0, 1]]
-        )
+        self.A = get_A(self.dt)
         self.B = get_B(self.dt)
-        self.H = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
-        self.Q = get_Q(self.dt, self.std_acc)
-        self.R = np.array([[self.std_acc_x**2, 0], [0, self.std_acc_y**2]])
-        self.P = np.eye(self.A.shape[0])
+        self.H = get_H()
+        self.Q = get_Q(self.dt, std_acc)
+        self.R = get_R(x_std_meas, y_std_meas)
+        self.P = get_P()
 
     def predict(self):
         self.x = np.dot(self.A, self.x) + np.dot(
