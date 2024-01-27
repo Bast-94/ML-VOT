@@ -11,7 +11,7 @@ from src.tracker import Tracker
 from src.video_generator import generate_video
 from src.config_manager import ConfigManager
 from glob import glob
-config = ConfigManager("config.yml")
+config = ConfigManager("config/config.yml")
 
 args = get_track_args()
 nb_frame = args.n_frame
