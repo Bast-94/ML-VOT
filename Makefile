@@ -1,18 +1,18 @@
 run:
 	python main.py -a
 
-test_hungarian:
-	python main.py -H -n 50
+hungarian:
+	python main.py -H -n  -g
 
-test_tracker: run
+tracker: run
 	diff produced/h_tracking.csv produced/ref
 
-test_kalman:
+kalman:
 	python -m pytest tests.py -s
 
-full_run:
+full_run: hungarian
 	mkdir ADL-Rundle-6/bounding_boxes/
-	python main.py -n 525
+	python main.py -H -n  -g -a
 
 reformat:
 	python -m black .
