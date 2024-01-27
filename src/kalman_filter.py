@@ -11,6 +11,16 @@ def get_Q(dt:float, std_acc:float):
         ]
     ) * std_acc**2
 
+def get_B(dt:float):
+    return np.array(
+        [
+            [(dt**2) / 2, 0],
+            [0, (dt**2) / 2],
+            [dt, 0],
+            [0, dt],
+        ]
+    )
+
 class KalmanFilter:
     def __init__(
         self,
@@ -32,14 +42,7 @@ class KalmanFilter:
         self.A = np.array(
             [[1, 0, self.dt, 0], [0, 1, 0, self.dt], [0, 0, 1, 0], [0, 0, 0, 1]]
         )
-        self.B = np.array(
-            [
-                [(self.dt**2) / 2, 0],
-                [0, (self.dt**2) / 2],
-                [self.dt, 0],
-                [0, self.dt],
-            ]
-        )
+        self.B = get_B(self.dt)
         self.H = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
         self.Q = get_Q(self.dt, self.std_acc)
         self.R = np.array([[self.std_acc_x**2, 0], [0, self.std_acc_y**2]])
