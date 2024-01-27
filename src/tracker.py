@@ -22,7 +22,7 @@ class Tracker:
         self.threshold = 0.5
 
     def print_info(self):
-        print(f"nb frame: {len(self.img_file_list)}")
+        print(f"Simple Tracker with threshold {self.threshold}")
 
     def get_frame(self, n_frame: int):
         return self.det_df[self.det_df.frame == n_frame]
@@ -57,12 +57,13 @@ class Tracker:
         self.frame_idx += 1
 
     def iou_tracking(self, output_csv: str):
+        print("Tracking")
         self.result_df = self.det_df.copy()
         first_frame = self.get_frame(self.frame_idx)
         for row in first_frame.index:
             self.result_df.loc[row, "id"] = self.cur_id
             self.cur_id += 1
-        while self.frame_idx < len(self.img_file_list):
+        for _ in tqdm(self.img_file_list):
             self.iou_perframe()
             self.next_frame()
 

@@ -11,6 +11,9 @@ class HungarianTracker(Tracker):
     def __init__(self, det_file: str, img_file_list: list):
         super().__init__(det_file, img_file_list)
 
+    def print_info(self):
+        print("Hungarian Tracker")
+        
     def similarity_matrix(
         self,
         n_frame: int = None,
