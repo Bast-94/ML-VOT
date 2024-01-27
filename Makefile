@@ -11,8 +11,8 @@ kalman:
 	python -m pytest tests.py -s
 
 full_run:
-	mkdir ADL-Rundle-6/bounding_boxes/
-	python main.py -H  -g -a
+	mkdir -p ADL-Rundle-6/bounding_boxes/
+	python main.py -H  -g -n 200
 
 reformat:
 	python -m black .
