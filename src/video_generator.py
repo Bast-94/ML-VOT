@@ -38,7 +38,7 @@ def generate_video(
     if tracker is None:
         tracker = Tracker("ADL-Rundle-6/det/det.txt", "ADL-Rundle-6/img1")
     if tracker.result_df is None:
-        tracker.iou_tracking("produced/h_tracking.csv")
+        tracker.track("produced/h_tracking.csv")
     cap = cv2.VideoCapture(file_name_pattern)
 
     fourcc = cv2.VideoWriter_fourcc(*"XVID")

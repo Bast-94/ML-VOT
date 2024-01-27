@@ -2,10 +2,14 @@ run:
 	python main.py -a
 
 hungarian:
-	python main.py -H -n 100 -g
+	python main.py -Ha --output produced/h_tracking.csv
+	diff produced/h_tracking.csv produced/h_tracking_ref.csv
 
 tracker: run
-	diff produced/h_tracking.csv produced/ref
+	diff produced/tracking.csv produced/tracking_ref.csv
+
+full_check: tracker hungarian
+
 
 kalman:
 	python -m pytest tests.py -s

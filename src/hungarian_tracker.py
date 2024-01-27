@@ -36,9 +36,14 @@ class HungarianTracker(Tracker):
                 similarity_matrix[i, j] = iou(bb1, bb2)
         return similarity_matrix
     
-    
+    def update_detection(self, detections: pd.DataFrame):
+        for row in detections.index:
+            if self.result_df.loc[row, "id"] == -1:
+                self.result_df.loc[row, "id"] = self.cur_id
+                self.cur_id += 1
+        return detections
 
-    def iou_perframe(self):
+    def apply_matching(self):
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
         similarity_matrix = self.similarity_matrix(tracks=tracks, detections=detections)
@@ -49,8 +54,4 @@ class HungarianTracker(Tracker):
                 tracks.index[row_idx], "id"
             ]
 
-        for row in detections.index:
-            if self.result_df.loc[row, "id"] == -1:
-                self.result_df.loc[row, "id"] = self.cur_id
-                self.cur_id += 1
-        return detections
+        return self.update_detection(detections)

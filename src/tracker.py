@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import cv2
 import pandas as pd
@@ -25,7 +26,7 @@ class Tracker:
         print(f"Simple Tracker with threshold {self.threshold}")
 
     def get_frame(self, n_frame: int):
-        return self.det_df[self.det_df.frame == n_frame]
+        return self.result_df[self.result_df.frame == n_frame]
 
     def get_bounding_box(self, frame_data: pd.DataFrame, row: int):
         return BoundingBox(
@@ -35,7 +36,7 @@ class Tracker:
             frame_data["bb_height"][row],
         )
 
-    def iou_perframe(self):
+    def apply_matching(self):
         threshold = self.threshold
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
@@ -57,18 +58,23 @@ class Tracker:
         self.frame_idx += 1
 
     def init_first_frame(self):
+        assert self.frame_idx == 1, print("First frame must be 1")
         first_frame = self.get_frame(self.frame_idx)
         for row in first_frame.index:
             self.result_df.loc[row, "id"] = self.cur_id
             self.cur_id += 1
+    
 
-    def iou_tracking(self, output_csv: str):
+    def track(self, output_csv: str):
         print("Tracking")
         self.result_df = self.det_df.copy()
         self.init_first_frame()
         for _ in tqdm(self.img_file_list):
-            self.iou_perframe()
+            self.apply_matching()
             self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False)
         print(f"Tracking done, result saved in {output_csv}")
+    
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        self.track(*args, **kwds)

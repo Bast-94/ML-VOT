@@ -45,3 +45,7 @@ class KalmanFilter:
         self.S = S
         self.K = K
         return self.x.T
+    
+    @classmethod
+    def tracking_kalman_filter(cls):
+        return cls(dt=1, u_x=0, u_y=0, std_acc=0.1, x_std_meas=0.1, y_std_meas=0.1)

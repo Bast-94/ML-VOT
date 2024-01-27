@@ -39,7 +39,7 @@ else:
 
 
 tracker.print_info()
-tracker.iou_tracking(config.OUTPUT_CSV)
+tracker.track(config.OUTPUT_CSV)
 
 
 if save_video:
