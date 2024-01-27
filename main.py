@@ -34,4 +34,5 @@ else:
     tracker = Tracker(DET_FILE, img_file_list)
 tracker.print_info()
 tracker.iou_tracking("produced/h_tracking.csv")
-# tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)
+if save_gif:
+    tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)
