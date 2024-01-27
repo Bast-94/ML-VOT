@@ -3,7 +3,9 @@ import argparse
 
 def get_track_args():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-n", "--n-frame", type=int, default=1, help="Number of frames to use")
+    arg_parser.add_argument(
+        "-n", "--n-frame", type=int, default=1, help="Number of frames to use"
+    )
     arg_parser.add_argument("-g", "--gif", action="store_true", help="Create gif")
     arg_parser.add_argument(
         "-H", "--hungarian", action="store_true", help="Use Hungarian algorithm"

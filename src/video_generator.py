@@ -7,7 +7,7 @@ from src.tracker import Tracker
 
 
 def update_frame(tracker: Tracker, cur_frame, id, bb1):
-    opencv_img =cv2.rectangle(
+    opencv_img = cv2.rectangle(
         cur_frame,
         (int(bb1.bb_left), int(bb1.bb_top)),
         (

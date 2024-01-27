@@ -20,10 +20,10 @@ if args.commands == "artifacts":
     url = f"https://api.github.com/repos/{OWNER}/{REPO}/actions/artifacts"
 
 if args.commands == "tree":
-    user = args.user if args.user != "" else OWNER
+    owner = args.owner if args.owner != "" else OWNER
     repo = args.repo if args.repo != "" else REPO
     branch = args.branch if args.branch != "" else "main"
-    url = f"https://api.github.com/repos/{user}/{repo}/git/trees/{branch}"
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}"
 
 response = requests.get(url, headers=headers)
 

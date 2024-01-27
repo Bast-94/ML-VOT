@@ -67,5 +67,3 @@ class Tracker:
             self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False)
-
-    
