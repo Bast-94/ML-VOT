@@ -8,6 +8,7 @@ def get_track_args():
     arg_parser.add_argument(
         "-H", "--hungarian", action="store_true", help="Use Hungarian algorithm"
     )
+    arg_parser.add_argument("-a", "--all", action="store_true", help="Use all frames")
     return arg_parser.parse_args()
 
 

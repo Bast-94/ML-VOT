@@ -19,6 +19,8 @@ DET_FILE = (
 args = get_track_args()
 nb_frame = args.n_frame
 save_gif = args.gif
+if args.all:
+    nb_frame = len(IMG_FILE_LIST)
 img_file_list = IMG_FILE_LIST[:nb_frame]
 if args.hungarian:
     print("Using Hungarian algorithm")
@@ -34,4 +36,4 @@ else:
     tracker = Tracker(DET_FILE, img_file_list)
 tracker.print_info()
 tracker.iou_tracking("produced/h_tracking.csv")
-tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)
+#tracker.generate_gif(gif_file="produced/bounding_boxes.gif", nb_frames=nb_frame)

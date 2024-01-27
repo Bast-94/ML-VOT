@@ -8,6 +8,9 @@ class HungarianTracker(Tracker):
     def __init__(self, det_file: str, img_file_list: list):
         super().__init__(det_file, img_file_list)
     
+
+    
+
     def iou_tracking(self, output_csv: str):
         print("Using Hungarian algorithm")
         self.result_df = self.det_df.copy()

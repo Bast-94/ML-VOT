@@ -1,5 +1,8 @@
 run:
-	python main.py -n 50
+	python main.py -a
+
+test: run
+	diff produced/h_tracking.csv produced/ref
 
 full_run:
 	mkdir ADL-Rundle-6/bounding_boxes/

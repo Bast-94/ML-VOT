@@ -18,6 +18,7 @@ class Tracker:
         self.cur_id = 0
         self.img_file_list = img_file_list
         self.result_df = None
+        self.frame_idx = 1
 
     def print_info(self):
         print(f"nb frame: {len(self.img_file_list)}")
@@ -53,25 +54,16 @@ class Tracker:
         similarity_matrix_df.columns = next_frame_data.index
         return similarity_matrix_df
 
-    """def _iou_tracking(self, output_csv: str, threshold: float = 0.5):
-        self.result_df = self.det_df.copy()
-        for n_frame, img_file in tqdm(enumerate(self.img_file_list, start=1)):
-            
-            similarity_matrix_df = self.similarity_matrix(n_frame)
+    
 
-
-        self.result_df.to_csv(output_csv, index=False)"""
-
-    def iou_tracking(self, output_csv: str, threshold: float = 0.5):
-        self.result_df = self.det_df.copy()
-        for n_frame, img_file in tqdm(enumerate(self.img_file_list, start=1)):
-            frame_data = self.get_frame(n_frame)
-            next_frame_data = self.get_frame(n_frame + 1)
-            for row1 in (frame_data.index):
+    def iou_perframe(self, threshold: float = 0.5):
+        tracks = self.get_frame(self.frame_idx)
+        detections = self.get_frame(self.frame_idx + 1)
+        for row1 in (tracks.index):
                 best_iou = 0
-                for row2 in (next_frame_data.index):
-                    bb1 = self.get_bound_box(frame_data, row1)
-                    bb2 = self.get_bound_box(next_frame_data, row2)
+                for row2 in (detections.index):
+                    bb1 = self.get_bound_box(tracks, row1)
+                    bb2 = self.get_bound_box(detections, row2)
                     iou_score = iou(bb1, bb2)
 
                     if self.result_df.loc[row1, "id"] == -1:
@@ -80,6 +72,15 @@ class Tracker:
                     if iou_score >= threshold and iou_score > best_iou:
                         self.result_df.loc[row2, "id"] = self.result_df.loc[row1, "id"]
                         best_iou = iou_score
+
+    def next_frame(self):
+        self.frame_idx += 1
+
+    def iou_tracking(self, output_csv: str, threshold: float = 0.5):
+        self.result_df = self.det_df.copy()
+        while self.frame_idx < len(self.img_file_list):
+            self.iou_perframe(threshold)
+            self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False)
 
