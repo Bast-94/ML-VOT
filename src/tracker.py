@@ -34,32 +34,10 @@ class Tracker:
             frame_data["bb_height"][row],
         )
 
-    def similarity_matrix(
-        self,
-        n_frame: int = None,
-        frame_data: pd.DataFrame = None,
-        next_frame_data: pd.DataFrame = None,
-    ):
-        if frame_data is None or next_frame_data is None:
-            if n_frame is None:
-                raise ValueError(
-                    "n_frame or frame_data and next_frame_data must be set"
-                )
-            frame_data = self.get_frame(n_frame)
-            next_frame_data = self.get_frame(n_frame + 1)
+    
 
-        similarity_matrix = np.zeros((len(frame_data), len(next_frame_data)))
-        for i, row1 in enumerate(frame_data.index):
-            bb1 = self.get_bound_box(frame_data, row1)
-            for j, row2 in enumerate(next_frame_data.index):
-                bb2 = self.get_bound_box(next_frame_data, row2)
-                similarity_matrix[i, j] = iou(bb1, bb2)
-        similarity_matrix_df = pd.DataFrame(similarity_matrix)
-        similarity_matrix_df.index = frame_data.index
-        similarity_matrix_df.columns = next_frame_data.index
-        return similarity_matrix_df
-
-    def iou_perframe(self, threshold: float = 0.5):
+    def iou_perframe(self,**kwargs):
+        threshold = kwargs.get("threshold", 0.5)
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
         for row1 in tracks.index:
