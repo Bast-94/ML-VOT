@@ -1,7 +1,8 @@
 import requests
 
-from src.yaml_utils import read_yaml
 from src.parsers import get_git_manager_args
+from src.yaml_utils import read_yaml
+
 # Replace these variables with your actual values
 config = read_yaml("secretdir/config.yml")
 TOKEN = config["TOKEN"]

@@ -1,9 +1,11 @@
 import numpy as np
+import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from tqdm import tqdm
+
 from src.iou import BoundingBox, intersection_box, iou
 from src.tracker import Tracker
-import pandas as pd
+
 
 class HungarianTracker(Tracker):
     def __init__(self, det_file: str, img_file_list: list):
@@ -30,19 +32,19 @@ class HungarianTracker(Tracker):
                 bb2 = self.get_bound_box(next_frame_data, row2)
                 similarity_matrix[i, j] = iou(bb1, bb2)
         return similarity_matrix
-    def iou_perframe(self, **kargs):
-        threshold = kargs.get("threshold", 0.5)
+
+    def iou_perframe(self):
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
         similarity_matrix = self.similarity_matrix(
             frame_data=tracks, next_frame_data=detections
         )
-        row_ind, col_ind = linear_sum_assignment(-similarity_matrix)
-        for i, row in enumerate(tracks.index):
-            if self.result_df.loc[row, "id"] == -1:
-                self.result_df.loc[row, "id"] = self.cur_id
+        row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
+        for row_idx, col_idx in zip(row_ind, col_ind):
+            if similarity_matrix[row_idx, col_idx] > kargs.get("threshold", 0.5):
+                self.result_df.loc[tracks.index[row_idx], "id"] = self.result_df.loc[
+                    detections.index[col_idx], "id"
+                ]
+            else:
+                self.result_df.loc[tracks.index[row_idx], "id"] = self.cur_id
                 self.cur_id += 1
-            if similarity_matrix[i, col_ind[i]] >= threshold:
-                self.result_df.loc[
-                    detections.index[col_ind[i]], "id"
-                ] = self.result_df.loc[row, "id"]

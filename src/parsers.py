@@ -21,13 +21,15 @@ def get_git_manager_args():
     subparsers = arg_parser.add_subparsers(dest="commands")
     artifacts_parser = subparsers.add_parser("artifacts")
     artifacts_parser.add_argument(
-        "-l", "--link", type=str, default="", help="Artifact link")
-    
+        "-l", "--link", type=str, default="", help="Artifact link"
+    )
+
     tree_parser = subparsers.add_parser("tree")
-    tree_parser.add_argument(
-        "-r", "--repo", type=str, default="", help="Repo name")
+    tree_parser.add_argument("-r", "--repo", type=str, default="", help="Repo name")
     tree_parser.add_argument("-u", "--user", type=str, default="", help="Tree url")
-    
-    tree_parser.add_argument("-b", "--branch", type=str, default="main", help="Branch name")
+
+    tree_parser.add_argument(
+        "-b", "--branch", type=str, default="main", help="Branch name"
+    )
 
     return arg_parser.parse_args()

@@ -13,12 +13,13 @@ import numpy as np
 
 
 class Tracker:
-    def __init__(self, det_file: str, img_file_list: list):
+    def __init__(self, det_file: str, img_file_list: list, threshold: float = 0.5):
         self.det_df = load_det_file(det_file)
         self.cur_id = 0
         self.img_file_list = img_file_list
         self.result_df = None
         self.frame_idx = 1
+        self.threshold = 0.5
 
     def print_info(self):
         print(f"nb frame: {len(self.img_file_list)}")
@@ -34,10 +35,8 @@ class Tracker:
             frame_data["bb_height"][row],
         )
 
-    
-
-    def iou_perframe(self,**kwargs):
-        threshold = kwargs.get("threshold", 0.5)
+    def iou_perframe(self):
+        threshold = self.threshold
         tracks = self.get_frame(self.frame_idx)
         detections = self.get_frame(self.frame_idx + 1)
         for row1 in tracks.index:
@@ -60,7 +59,7 @@ class Tracker:
     def iou_tracking(self, output_csv: str, threshold: float = 0.5):
         self.result_df = self.det_df.copy()
         while self.frame_idx < len(self.img_file_list):
-            self.iou_perframe(threshold)
+            self.iou_perframe()
             self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False)

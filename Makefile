@@ -1,6 +1,9 @@
 run:
 	python main.py -a
 
+test_hungarian:
+	python main.py -H -n 50
+
 test_tracker: run
 	diff produced/h_tracking.csv produced/ref
 

@@ -1,6 +1,7 @@
 import numpy as np
 
-from src.kalman_matrices import get_A, get_B, get_H, get_Q, get_R,get_P
+from src.kalman_matrices import get_A, get_B, get_H, get_P, get_Q, get_R
+
 
 class KalmanFilter:
     def __init__(
@@ -15,8 +16,7 @@ class KalmanFilter:
         self.dt = dt
         self.u_x = u_x
         self.u_y = u_y
-        
-        
+
         self.time_state = 0
         self.x = np.array([[0, 0, 0, 0]]).T
         self.A = get_A(self.dt)
