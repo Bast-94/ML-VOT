@@ -12,13 +12,18 @@ from src.kalman_tracker import KalmanTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
 from src.video_generator import generate_video
-
+from src.utils import load_det_file
 config = ConfigManager("config/config.yml")
 
 args = get_track_args()
 
 if args.commands == "test":
     print("Test")
+    det_df = load_det_file(config.DET_FILE)
+    frame_data = det_df[det_df.frame == 1]
+    # convert frame_data to list of dict
+    frame_data = frame_data.to_dict("records")
+    print(frame_data)
     sys.exit(0)
 
 nb_frame = args.n_frame

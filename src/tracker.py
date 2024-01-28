@@ -21,14 +21,20 @@ class Tracker:
         self.result_df = None
         self.frame_idx = 1
         self.threshold = 0.5
+        self.current_tracks = []
+        self.current_detections = []
 
     def print_info(self):
         print(f"Simple Tracker with threshold {self.threshold}")
 
-    def get_frame(self, n_frame: int):
-        return self.result_df[self.result_df.frame == n_frame]
+    def get_frame2(self, n_frame: int):
+        return self.det_df[self.result_df.frame == n_frame]
 
-    def get_bounding_box(self, frame_data: pd.DataFrame, row: int):
+    # same method as get_frame, but with different return type
+    def get_frame(self, n_frame: int) -> list[dict[str, Any]]:
+        return self.det_df[self.det_df['frame']== n_frame].to_dict("records")
+
+    def get_bounding_box(self, frame_data: pd.DataFrame | dict, row: int):
         return BoundingBox(
             frame_data["bb_left"][row],
             frame_data["bb_top"][row],
@@ -36,10 +42,10 @@ class Tracker:
             frame_data["bb_height"][row],
         )
 
-    def apply_matching(self):
+    def apply_matching2(self):
         threshold = self.threshold
-        tracks = self.get_frame(self.frame_idx)
-        detections = self.get_frame(self.frame_idx + 1)
+        tracks = self.current_tracks
+        detections = self.current_detections
         for row1 in tracks.index:
             best_iou = 0
             for row2 in detections.index:
@@ -47,11 +53,31 @@ class Tracker:
                 bb2 = self.get_bounding_box(detections, row2)
                 iou_score = iou(bb1, bb2)
 
-                if self.result_df.loc[row1, "id"] == -1:
-                    self.result_df.loc[row1, "id"] = self.cur_id
+                if tracks.loc[row1, "id"] == -1:
+                    tracks.loc[row1, "id"] = self.cur_id
                     self.cur_id += 1
                 if iou_score >= threshold and iou_score > best_iou:
-                    self.result_df.loc[row2, "id"] = self.result_df.loc[row1, "id"]
+                    detections.loc[row2, "id"] = tracks.loc[row1, "id"]
+                    best_iou = iou_score
+        self.current_tracks = tracks
+        self.current_detections = detections
+    
+
+
+    def apply_matching(self):
+        
+        for track in self.current_tracks:
+            best_iou = 0
+            for detection in self.current_detections:
+                bb1 = BoundingBox(track["bb_left"], track["bb_top"], track["bb_width"], track["bb_height"])
+                bb2 = BoundingBox(detection["bb_left"], detection["bb_top"], detection["bb_width"], detection["bb_height"])
+                iou_score = iou(bb1, bb2)
+                if track["id"] == -1:
+                    track["id"] = self.cur_id
+                    self.cur_id += 1
+                if iou_score >= self.threshold and iou_score > best_iou:
+                    print(f"Track {track['id']} matched with detection {detection['id']}")
+                    detection["id"] = track["id"]
                     best_iou = iou_score
 
     def next_frame(self):
@@ -59,19 +85,28 @@ class Tracker:
 
     def init_first_frame(self):
         assert self.frame_idx == 1, print("First frame must be 1")
-        first_frame = self.get_frame(self.frame_idx)
-        for row in first_frame.index:
-            self.result_df.loc[row, "id"] = self.cur_id
+        self.current_tracks = self.get_frame(self.frame_idx)
+        self.current_detections = self.get_frame(self.frame_idx + 1)
+        for track in self.current_tracks:
+            track["id"] = self.cur_id
             self.cur_id += 1
     
+    def write_track_to_result(self):
+        self.result_df = pd.concat([self.result_df, pd.DataFrame(self.current_tracks)])
+
+    def update_track_and_detection(self):
+        self.current_tracks = self.current_detections
+        self.current_detections = self.get_frame(self.frame_idx + 1)
 
     def track(self, output_csv: str):
         print("Tracking")
-        self.result_df = self.det_df.copy()
+        self.result_df = pd.DataFrame(columns=self.det_df.columns)
         self.init_first_frame()
         for _ in tqdm(self.img_file_list):
             self.apply_matching()
+            self.write_track_to_result()
             self.next_frame()
+            self.update_track_and_detection()
 
         self.result_df.to_csv(output_csv, index=False)
         print(f"Tracking done, result saved in {output_csv}")
