@@ -2,7 +2,7 @@ all: track_eval
 run:
 	python main.py -K --output produced/kalman_tracking.csv --video produced/kalman_tracking.avi
 	python main.py -H --output produced/hungarian_tracking.csv --video produced/hungarian_tracking.avi
-	python main.py --output produced/tracking.csv --video produced/tracking.avi
+	python main.py -N --output produced/nn_tracking.csv --video produced/nn_tracking.avi
 
 hungarian:
 	python main.py -Ha --output produced/h_tracking.csv
@@ -22,13 +22,7 @@ MOT_DIR=TrackEval/data/trackers/mot_challenge/MOT15-train
 
 kalman_tracking:
 	python main.py -K --output $(RESULT_FILE)
-	[ -d $(MOT_DIR)/$@ ] || cp -r $(MOT_DIR)/MPNTrack $(MOT_DIR)/$@
-	cp $(RESULT_FILE) $(MOT_DIR)/$@/data/ADL-Rundle-6.txt
-
-	sh test_eval.sh $@
-	mkdir -p produced/$@
-	cp $(MOT_DIR)/$@/*.png produced/$@/
-	cp $(MOT_DIR)/$@/*.pdf produced/$@/
+	sh full_eval.sh $@
 
 hungarian_tracking:
 	python main.py -H --output $(RESULT_FILE)
@@ -39,6 +33,8 @@ hungarian_tracking:
 	mkdir -p produced/$@
 	cp $(MOT_DIR)/$@/*.png produced/$@/
 	cp $(MOT_DIR)/$@/*.pdf produced/$@/
+
+TRACKER:=hungarian_tracking kalman_tracking nn_tracking
 
 
 

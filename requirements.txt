@@ -10,3 +10,5 @@ pyyaml
 termcolor
 pycocotools
 tabulate
+torchvision
+torch

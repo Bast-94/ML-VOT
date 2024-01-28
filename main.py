@@ -28,12 +28,12 @@ if args.commands == "test":
     print("Test")
     import torch
     import torch.nn.functional as F
-    
+
     nn_tracker = NNTracker(config.DET_FILE, IMG_FILE_LIST)
     nn_tracker.print_info()
     nn_tracker.init_first_frame()
     encoded = nn_tracker.encode_frame(nn_tracker.current_tracks)
-    
+
     print(nn_tracker.similarity_matrix())
 
     sys.exit(0)
@@ -41,8 +41,9 @@ if args.commands == "test":
 nb_frame = args.n_frame
 save_video = args.video
 output_csv = args.output_csv
-
-if args.all:
+if nb_frame is not None:
+    nb_frame = int(nb_frame)
+else:
     nb_frame = len(IMG_FILE_LIST)
 img_file_list = IMG_FILE_LIST[:nb_frame]
 

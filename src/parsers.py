@@ -4,7 +4,7 @@ import argparse
 def get_track_args():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
-        "-n", "--n-frame", type=int, default=1, help="Number of frames to use"
+        "-n", "--n-frame", type=int, default=None, help="Number of frames to use"
     )
     subparsers = arg_parser.add_subparsers(dest="commands", required=False)
     arg_parser.add_argument(

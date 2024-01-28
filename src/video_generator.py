@@ -3,6 +3,7 @@ import glob
 import cv2
 from tqdm import tqdm
 
+from src.iou import BoundingBox
 from src.tracker import Tracker
 
 
@@ -51,9 +52,10 @@ def generate_video(
     nb_frame = nb_frame if max_frame is None else min(nb_frame, max_frame)
     for i in tqdm(range(nb_frame)):
         frame_data = tracker.result_df[tracker.result_df["frame"] == i + 1]
-        for row in frame_data.index:
-            id = frame_data.loc[row, "id"]
-            bb1 = tracker.get_bounding_box(frame_data.loc[row])
+        for frame in frame_data.iterrows():
+            id = frame[1]["id"]
+            frame_dict = frame[1].to_dict()
+            bb1 = tracker.get_bounding_box(frame_dict)
             update_frame(tracker, cur_frame, id, bb1)
 
         out.write(cur_frame)

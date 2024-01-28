@@ -39,6 +39,7 @@ class Tracker:
 
     def print_info(self) -> None:
         print(f"Simple Tracker with threshold {self.threshold}")
+        print(f"Number of frames: {len(self.img_file_list)}")
 
     # same method as get_frame, but with different return type
     def get_frame(self, n_frame: int) -> list[dict[str, Any]]:
@@ -47,7 +48,7 @@ class Tracker:
     @staticmethod
     def get_bounding_box(line_dict: dict[str, Any]) -> BoundingBox:
         return BoundingBox(
-            line_dict["bb_left"],
+            max(line_dict["bb_left"], 0),
             line_dict["bb_top"],
             line_dict["bb_width"],
             line_dict["bb_height"],
@@ -94,7 +95,7 @@ class Tracker:
 
     def update_track_and_detection(self) -> None:
         self.current_tracks = self.current_detections
-        self.current_detections = self.get_frame(self.frame_idx + 1)
+        self.current_detections = self.get_frame(self.frame_idx +2)
 
     def track(self, output_csv: str) -> None:
         print("Tracking")
@@ -103,8 +104,8 @@ class Tracker:
         for _ in tqdm(self.img_file_list):
             self.apply_matching()
             self.write_track_to_result()
-            self.next_frame()
             self.update_track_and_detection()
+            self.next_frame()
 
         self.result_df.to_csv(output_csv, index=False, header=False)
         print(f"Tracking done, result saved in {output_csv}")
