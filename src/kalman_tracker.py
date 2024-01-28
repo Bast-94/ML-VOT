@@ -72,14 +72,14 @@ class KalmanTracker(HungarianTracker):
         for row_idx, col_idx in zip(row_ind, col_ind):
             track_id = self.current_tracks[row_idx]["id"]
             detection = self.current_detections[col_idx]
-            
             detection["id"] = track_id
-            center = centroid(self.get_bounding_box(detection))
-            assert center.shape == (2,), print(
-                f"center must be a 2d vector, got {center.shape}"
+
+            detection_centroid = centroid(self.get_bounding_box(detection))
+            assert detection_centroid.shape == (2,), print(
+                f"center must be a 2d vector, got {detection_centroid.shape}"
             )
             
-            (self.kalman_filter_map[track_id].update(center))
+            self.kalman_filter_map[track_id].update(detection_centroid)
             
         
         self.update_detection()
