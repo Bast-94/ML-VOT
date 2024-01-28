@@ -18,14 +18,38 @@ generate:
 	python main.py -K --output $(RESULT_FILE)
 	cp $(RESULT_FILE) $(DEST_FILE)
 
-track_eval: download generate
-	sh test_eval.sh
+MOT_DIR=TrackEval/data/trackers/mot_challenge/MOT15-train
+
+kalman_tracking:
+	python main.py -K --output $(RESULT_FILE)
+	[ -d $(MOT_DIR)/$@ ] || cp -r $(MOT_DIR)/MPNTrack $(MOT_DIR)/$@
+	cp $(RESULT_FILE) $(MOT_DIR)/$@/data/ADL-Rundle-6.txt
+
+	sh test_eval.sh $@
+	mkdir -p produced/$@
+	cp $(MOT_DIR)/$@/*.png produced/$@/
+	cp $(MOT_DIR)/$@/*.pdf produced/$@/
+
+hungarian_tracking:
+	python main.py -H --output $(RESULT_FILE)
+	[ -d $(MOT_DIR)/$@ ] || cp -r $(MOT_DIR)/MPNTrack $(MOT_DIR)/$@
+	cp $(RESULT_FILE) $(MOT_DIR)/$@/data/ADL-Rundle-6.txt
+
+	sh test_eval.sh $@
+	mkdir -p produced/$@
+	cp $(MOT_DIR)/$@/*.png produced/$@/
+	cp $(MOT_DIR)/$@/*.pdf produced/$@/
+
+
+
+track_eval: download kalman_tracking hungarian_tracking
 	
+
 
 
 full_check: tracker hungarian
 
-kalman:
+test_kalman:
 	python -m pytest tests.py -s
 
 clean:
