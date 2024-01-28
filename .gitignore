@@ -8,3 +8,5 @@ __pycache__
 secretdir/
 tests.py
 produced/
+TrackEval/
+data.zip

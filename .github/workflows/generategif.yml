@@ -32,7 +32,8 @@ jobs:
       
       - name: Install dependencies 
         run: |
-         pip install pandas imageio tqdm opencv-python numpy matplotlib collection scipy pyyaml termcolor
+         pip install pandas imageio tqdm opencv-python numpy matplotlib collection scipy pyyaml termcolor pycocotools tabulate
+         
       - name : generate data
         run: |
           make 

@@ -79,6 +79,7 @@ class KalmanTracker(HungarianTracker):
             )
 
             self.kalman_filter_map[track_id].update(detection_centroid)
-
+        # check that id in track are unique
+        
         self.update_detection()
         self.clean_kalman_filter_map()

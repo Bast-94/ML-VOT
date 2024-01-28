@@ -43,13 +43,10 @@ class Tracker:
     def apply_matching(self) -> None:
         for track in self.current_tracks:
             best_iou = 0
+            bounding_box_1 = self.get_bounding_box(track)
             for detection in self.current_detections:
-                bb1 = self.get_bounding_box(track)
                 bb2 = self.get_bounding_box(detection)
-                iou_score = iou(bb1, bb2)
-                if track["id"] == -1:
-                    track["id"] = self.cur_id
-                    self.cur_id += 1
+                iou_score = iou(bounding_box_1, bb2)
                 if iou_score >= self.threshold and iou_score > best_iou:
                     detection["id"] = track["id"]
                     best_iou = iou_score
@@ -66,6 +63,10 @@ class Tracker:
             self.cur_id += 1
 
     def write_track_to_result(self) -> None:
+        # check that id is not twice in current_tracks
+        assert len(self.current_tracks) == len(
+            set([track["id"] for track in self.current_tracks])
+        ), print([track["id"] for track in self.current_tracks])
         self.result_df = pd.concat([self.result_df, pd.DataFrame(self.current_tracks)])
 
     def update_track_and_detection(self) -> None:

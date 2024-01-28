@@ -1,0 +1,12 @@
+pandas
+imageio
+tqdm
+opencv-python
+numpy==1.23.5
+matplotlib
+collection
+scipy
+pyyaml
+termcolor
+pycocotools
+tabulate
