@@ -65,7 +65,7 @@ class KalmanTracker(HungarianTracker):
                 del self.kalman_filter_map[track_id]
 
     def apply_matching(self):
-        #print("Applying matching at frame", self.frame_idx)
+        
         similarity_matrix = self.similarity_matrix()
         row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
 
@@ -83,4 +83,4 @@ class KalmanTracker(HungarianTracker):
             
         
         self.update_detection()
-        #self.clean_kalman_filter_map()
+        self.clean_kalman_filter_map()
