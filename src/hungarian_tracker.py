@@ -3,7 +3,8 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from tqdm import tqdm
 
-from src.iou import BoundingBox, intersection_box, iou
+from src.iou import (BoundingBox, bb_with_dim_and_centroid, intersection_box,
+                     iou)
 from src.tracker import Tracker
 
 
@@ -19,8 +20,8 @@ class HungarianTracker(Tracker):
             (len(self.current_tracks), len(self.current_detections))
         )
         for t, track in enumerate(self.current_tracks):
+            bbt = self.get_bounding_box(track)
             for d, detection in enumerate(self.current_detections):
-                bbt = self.get_bounding_box(track)
                 bbd = self.get_bounding_box(detection)
                 similarity_matrix[t, d] = iou(bbt, bbd)
 

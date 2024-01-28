@@ -42,7 +42,7 @@ def generate_video(
     cap = cv2.VideoCapture(file_name_pattern)
 
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
-    fps = 25
+    fps = 50
     keep_reading, cur_frame = cap.read()
 
     frame_size = (cur_frame.shape[1], cur_frame.shape[0])
@@ -53,7 +53,7 @@ def generate_video(
         frame_data = tracker.result_df[tracker.result_df["frame"] == i + 1]
         for row in frame_data.index:
             id = frame_data.loc[row, "id"]
-            bb1 = tracker.get_bounding_box(frame_data, row)
+            bb1 = tracker.get_bounding_box(frame_data.loc[row])
             update_frame(tracker, cur_frame, id, bb1)
 
         out.write(cur_frame)
@@ -63,3 +63,4 @@ def generate_video(
 
     out.release()
     cap.release()
+    print(f"Video generated at {output_file}")

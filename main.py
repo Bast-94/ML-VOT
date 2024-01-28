@@ -41,13 +41,14 @@ if args.hungarian:
     tracker = HungarianTracker(config.DET_FILE, img_file_list)
 elif args.kalman:
     tracker = KalmanTracker(config.DET_FILE, img_file_list)
+    
 else:
     tracker = Tracker(config.DET_FILE, img_file_list)
 
 
 tracker.print_info()
 tracker(config.OUTPUT_CSV)
-print(termcolor.colored("Done", "green"))
+
 
 if save_video:
     print("Generating video")

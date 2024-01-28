@@ -30,17 +30,18 @@ class KalmanFilter:
         self.x = np.dot(self.A, self.x) + np.dot(
             self.B, np.array([[self.u_x, self.u_y]]).T
         )
+        
         self.P = np.dot(np.dot(self.A, self.P), self.A.T) + self.Q
         self.time_state += self.dt
         return self.x
 
     def update(self, z):
-        if z.shape == (2,):
-            z = z.reshape(-1, 1)
+        z = z.reshape(-1, 1) if z.shape == (2,) else z
 
         S = self.R + self.H @ self.P @ self.H.T
         K = self.P @ self.H.T @ np.linalg.inv(S)
         self.x = self.x + K @ (z - self.H @ self.x)
+        
         self.P = (np.eye(self.P.shape[0]) - K @ self.H) @ self.P
         self.S = S
         self.K = K
@@ -48,4 +49,4 @@ class KalmanFilter:
 
     @classmethod
     def tracking_kalman_filter(cls):
-        return cls(dt=1, u_x=0, u_y=0, std_acc=0.1, x_std_meas=0.1, y_std_meas=0.1)
+        return cls(dt=0.1, u_x=1, u_y=1, std_acc=1, x_std_meas=0.1, y_std_meas=0.1)

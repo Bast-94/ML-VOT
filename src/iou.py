@@ -11,10 +11,6 @@ def bb_to_np(bb: BoundingBox):
     return np.array([bb.bb_left, bb.bb_top, bb.bb_width, bb.bb_height])
 
 
-def np_to_bb(np_bb: np.ndarray):
-    return BoundingBox(np_bb[0], np_bb[1], np_bb[2], np_bb[3])
-
-
 def print_bounding_box(bb):
     print(
         f"bb_left: {bb.bb_left}, bb_top: {bb.bb_top}, bb_width: {bb.bb_width}, bb_height: {bb.bb_height}"
@@ -31,7 +27,7 @@ def distance(bb1: BoundingBox, bb2: BoundingBox):
 
 def bb_with_dim_and_centroid(center: np.ndarray, width: int, height: int):
     assert width > 0 and height > 0
-    assert center.shape == (2,)
+    assert center.shape[0] == 2
     return BoundingBox(center[0] - width / 2, center[1] - height / 2, width, height)
 
 
