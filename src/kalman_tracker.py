@@ -11,8 +11,7 @@ class KalmanTracker(HungarianTracker):
     def __init__(self, det_file: str, img_file_list: list):
         super().__init__(det_file, img_file_list)
         self.kalman_filter_map = {}
-        self.current_track = None
-        self.current_detection = None
+        
 
     def print_info(self):
         print("Kalman Tracker")

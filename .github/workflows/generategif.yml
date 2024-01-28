@@ -32,7 +32,7 @@ jobs:
       
       - name: Install dependencies 
         run: |
-         pip install pandas imageio tqdm opencv-python numpy matplotlib collection scipy pyyaml
+         pip install pandas imageio tqdm opencv-python numpy matplotlib collection scipy pyyaml termcolor
       - name : generate data
         run: |
           make full_run
