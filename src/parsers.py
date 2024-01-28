@@ -15,7 +15,9 @@ def get_track_args():
     arg_parser.add_argument(
         "-H", "--hungarian", action="store_true", help="Use Hungarian algorithm"
     )
-    arg_parser.add_argument('-o', '--output', type=str, default='output.csv', help='Output file')
+    arg_parser.add_argument(
+        "-o", "--output", type=str, default="output.csv", help="Output file"
+    )
     subparsers.add_parser("test", help="Test")
     return arg_parser.parse_args()
 

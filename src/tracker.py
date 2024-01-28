@@ -32,7 +32,7 @@ class Tracker:
 
     # same method as get_frame, but with different return type
     def get_frame(self, n_frame: int) -> list[dict[str, Any]]:
-        return self.det_df[self.det_df['frame']== n_frame].to_dict("records")
+        return self.det_df[self.det_df["frame"] == n_frame].to_dict("records")
 
     def get_bounding_box(self, frame_data: pd.DataFrame | dict, row: int):
         return BoundingBox(
@@ -40,6 +40,15 @@ class Tracker:
             frame_data["bb_top"][row],
             frame_data["bb_width"][row],
             frame_data["bb_height"][row],
+        )
+
+    @staticmethod
+    def get_bounding_box2(line_dict: dict[str, Any]) -> BoundingBox:
+        return BoundingBox(
+            line_dict["bb_left"],
+            line_dict["bb_top"],
+            line_dict["bb_width"],
+            line_dict["bb_height"],
         )
 
     def apply_matching2(self):
@@ -61,22 +70,19 @@ class Tracker:
                     best_iou = iou_score
         self.current_tracks = tracks
         self.current_detections = detections
-    
-
 
     def apply_matching(self):
-        
         for track in self.current_tracks:
             best_iou = 0
             for detection in self.current_detections:
-                bb1 = BoundingBox(track["bb_left"], track["bb_top"], track["bb_width"], track["bb_height"])
-                bb2 = BoundingBox(detection["bb_left"], detection["bb_top"], detection["bb_width"], detection["bb_height"])
+                bb1 = self.get_bounding_box2(track)
+                bb2 = self.get_bounding_box2(detection)
                 iou_score = iou(bb1, bb2)
                 if track["id"] == -1:
                     track["id"] = self.cur_id
                     self.cur_id += 1
                 if iou_score >= self.threshold and iou_score > best_iou:
-                    print(f"Track {track['id']} matched with detection {detection['id']}")
+                    
                     detection["id"] = track["id"]
                     best_iou = iou_score
 
@@ -90,7 +96,7 @@ class Tracker:
         for track in self.current_tracks:
             track["id"] = self.cur_id
             self.cur_id += 1
-    
+
     def write_track_to_result(self):
         self.result_df = pd.concat([self.result_df, pd.DataFrame(self.current_tracks)])
 
@@ -110,6 +116,6 @@ class Tracker:
 
         self.result_df.to_csv(output_csv, index=False)
         print(f"Tracking done, result saved in {output_csv}")
-    
+
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         self.track(*args, **kwds)

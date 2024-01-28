@@ -11,8 +11,9 @@ from src.hungarian_tracker import HungarianTracker
 from src.kalman_tracker import KalmanTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
-from src.video_generator import generate_video
 from src.utils import load_det_file
+from src.video_generator import generate_video
+import termcolor
 config = ConfigManager("config/config.yml")
 
 args = get_track_args()
@@ -45,7 +46,7 @@ else:
 
 tracker.print_info()
 tracker.track(config.OUTPUT_CSV)
-
+print(termcolor.colored("Done", "green"))
 
 if save_video:
     print("Generating video")

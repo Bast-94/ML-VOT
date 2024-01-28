@@ -14,44 +14,28 @@ class HungarianTracker(Tracker):
     def print_info(self):
         print("Hungarian Tracker")
 
-    def similarity_matrix(
-        self,
-        n_frame: int = None,
-        tracks: pd.DataFrame = None,
-        detections: pd.DataFrame = None,
-    ):
-        if tracks is None or detections is None:
-            if n_frame is None:
-                raise ValueError(
-                    "n_frame or frame_data and next_frame_data must be set"
-                )
-            tracks = self.get_frame(n_frame)
-            detections = self.get_frame(n_frame + 1)
+    def similarity_matrix(self):
+        similarity_matrix = np.zeros(
+            (len(self.current_tracks), len(self.current_detections))
+        )
+        for t, track in enumerate(self.current_tracks):
+            for d, detection in enumerate(self.current_detections):
+                bbt = self.get_bounding_box2(track)
+                bbd = self.get_bounding_box2(detection)
+                similarity_matrix[t, d] = iou(bbt, bbd)
 
-        similarity_matrix = np.zeros((len(tracks), len(detections)))
-        for i, row1 in enumerate(tracks.index):
-            bb1 = self.get_bounding_box(tracks, row1)
-            for j, row2 in enumerate(detections.index):
-                bb2 = self.get_bounding_box(detections, row2)
-                similarity_matrix[i, j] = iou(bb1, bb2)
         return similarity_matrix
-    
-    def update_detection(self, detections: pd.DataFrame):
-        for row in detections.index:
-            if self.result_df.loc[row, "id"] == -1:
-                self.result_df.loc[row, "id"] = self.cur_id
+
+    def update_detection(self):
+        for detection in self.current_detections:
+            if detection["id"] == -1:
+                detection["id"] = self.cur_id
                 self.cur_id += 1
-        return detections
-
+        
     def apply_matching(self):
-        tracks = self.get_frame(self.frame_idx)
-        detections = self.get_frame(self.frame_idx + 1)
-        similarity_matrix = self.similarity_matrix(tracks=tracks, detections=detections)
+        
+        similarity_matrix = self.similarity_matrix()
         row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
-
         for row_idx, col_idx in zip(row_ind, col_ind):
-            self.result_df.loc[detections.index[col_idx], "id"] = self.result_df.loc[
-                tracks.index[row_idx], "id"
-            ]
-
-        return self.update_detection(detections)
+            self.current_detections[col_idx]["id"] = self.current_tracks[row_idx]["id"]
+        self.update_detection()
