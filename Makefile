@@ -1,5 +1,7 @@
 run:
-	python main.py -Kav
+	python main.py -K --output produced/kalman_tracking.csv --video produced/kalman_tracking.avi
+	python main.py -H --output produced/hungarian_tracking.csv --video produced/hungarian_tracking.avi
+	python main.py ---output produced/tracking.csv --video produced/tracking.avi
 
 hungarian:
 	python main.py -Ha --output produced/h_tracking.csv
@@ -14,9 +16,10 @@ full_check: tracker hungarian
 kalman:
 	python -m pytest tests.py -s
 
-full_run:
-	mkdir -p ADL-Rundle-6/bounding_boxes/
-	python main.py -H  -g -n 200
+
+
+clean:
+	rm -rf produced/*
 
 reformat:
 	python -m black .

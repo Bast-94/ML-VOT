@@ -7,8 +7,9 @@ def get_track_args():
         "-n", "--n-frame", type=int, default=1, help="Number of frames to use"
     )
     subparsers = arg_parser.add_subparsers(dest="commands", required=False)
-    arg_parser.add_argument("-a", "--all", action="store_true", help="Use all frames")
-    arg_parser.add_argument("-v", "--video", action="store_true", help="Create video")
+    arg_parser.add_argument("-a", "--all", action="store_true", help="Use all frames",default=True)
+    arg_parser.add_argument("-v", "--video", type=str, default=None, help="Video path")
+
     arg_parser.add_argument(
         "-K", "--kalman", action="store_true", help="Use Kalman filter"
     )
@@ -16,7 +17,7 @@ def get_track_args():
         "-H", "--hungarian", action="store_true", help="Use Hungarian algorithm"
     )
     arg_parser.add_argument(
-        "-o", "--output", type=str, default="output.csv", help="Output file"
+        "-o", "--output-csv", type=str, default="output.csv", help="Output file"
     )
     subparsers.add_parser("test", help="Test")
     return arg_parser.parse_args()

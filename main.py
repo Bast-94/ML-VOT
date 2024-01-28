@@ -30,7 +30,7 @@ if args.commands == "test":
 
 nb_frame = args.n_frame
 save_video = args.video
-
+output_csv = args.output_csv
 IMG_FILE_LIST = glob(os.path.join(config.IMG_DIR, "*.jpg"))
 if args.all:
     nb_frame = len(IMG_FILE_LIST)
@@ -46,13 +46,13 @@ else:
 
 
 tracker.print_info()
-tracker(config.OUTPUT_CSV)
+tracker(output_csv=output_csv)
 
 
-if save_video:
+if save_video is not None:
     print("Generating video")
     generate_video(
-        output_file=config.OUTPUT_VIDEO,
+        output_file=args.video,
         file_name_pattern="ADL-Rundle-6/img1/%06d.jpg",
         tracker=tracker,
         max_frame=nb_frame,
