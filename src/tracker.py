@@ -14,6 +14,19 @@ import numpy as np
 
 
 class Tracker:
+    frame_keys = [
+        "frame",
+        "id",
+        "bb_left",
+        "bb_top",
+        "bb_width",
+        "bb_height",
+        "conf",
+        "x",
+        "y",
+        "z",
+    ]
+
     def __init__(self, det_file: str, img_file_list: list, threshold: float = 0.5):
         self.det_df = load_det_file(det_file)
         self.cur_id = 0
@@ -39,7 +52,7 @@ class Tracker:
             line_dict["bb_width"],
             line_dict["bb_height"],
         )
-    
+
     def similarity_matrix(self) -> np.ndarray:
         pass
 
@@ -67,6 +80,13 @@ class Tracker:
 
     def write_track_to_result(self) -> None:
         # check that id is not twice in current_tracks
+        # check that tracks keys are the same as frame_keys
+        for track in self.current_tracks:
+            assert track["id"] != -1, print("Track id must be != -1")
+            assert len(track.keys()) == len(self.frame_keys), print(track.keys())
+            assert all([key in track.keys() for key in self.frame_keys]), print(
+                track.keys()
+            )
         assert len(self.current_tracks) == len(
             set([track["id"] for track in self.current_tracks])
         ), print([track["id"] for track in self.current_tracks])
