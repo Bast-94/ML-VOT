@@ -1,5 +1,5 @@
 run:
-	python main.py -a
+	python main.py -Kav
 
 hungarian:
 	python main.py -Ha --output produced/h_tracking.csv
