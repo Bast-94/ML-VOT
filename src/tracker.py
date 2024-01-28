@@ -82,7 +82,7 @@ class Tracker:
             self.next_frame()
             self.update_track_and_detection()
 
-        self.result_df.to_csv(output_csv, index=False)
+        self.result_df.to_csv(output_csv, index=False, header=False)
         print(f"Tracking done, result saved in {output_csv}")
 
     def __call__(self, output_csv: str) -> Any:
