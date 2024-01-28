@@ -39,6 +39,9 @@ class Tracker:
             line_dict["bb_width"],
             line_dict["bb_height"],
         )
+    
+    def similarity_matrix(self) -> np.ndarray:
+        pass
 
     def apply_matching(self) -> None:
         for track in self.current_tracks:

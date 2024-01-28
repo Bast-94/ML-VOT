@@ -10,6 +10,7 @@ from scipy.optimize import linear_sum_assignment
 from src.config_manager import ConfigManager
 from src.hungarian_tracker import HungarianTracker
 from src.kalman_tracker import KalmanTracker
+from src.nn_tracker import NNTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
 from src.utils import load_det_file
@@ -41,6 +42,8 @@ if args.hungarian:
     tracker = HungarianTracker(config.DET_FILE, img_file_list)
 elif args.kalman:
     tracker = KalmanTracker(config.DET_FILE, img_file_list)
+elif args.nn:
+    tracker = NNTracker(config.DET_FILE, img_file_list)
 else:
     tracker = Tracker(config.DET_FILE, img_file_list)
 
