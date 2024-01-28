@@ -36,7 +36,7 @@ jobs:
          
       - name : generate data
         run: |
-          make 
+          make all run
       
       - name: Upload production artifacts
         uses: actions/upload-artifact@v3
