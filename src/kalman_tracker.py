@@ -66,9 +66,9 @@ class KalmanTracker(HungarianTracker):
 
     def apply_matching(self):
         similarity_matrix = self.similarity_matrix()
-        row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
+        match_track_indices, match_det_indices = linear_sum_assignment(1 - similarity_matrix)
 
-        for row_idx, col_idx in zip(row_ind, col_ind):
+        for row_idx, col_idx in zip(match_track_indices, match_det_indices):
             track_id = self.current_tracks[row_idx]["id"]
             detection = self.current_detections[col_idx]
             detection["id"] = track_id
