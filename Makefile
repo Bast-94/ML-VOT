@@ -26,13 +26,7 @@ kalman_tracking:
 
 hungarian_tracking:
 	python main.py -H --output $(RESULT_FILE)
-	[ -d $(MOT_DIR)/$@ ] || cp -r $(MOT_DIR)/MPNTrack $(MOT_DIR)/$@
-	cp $(RESULT_FILE) $(MOT_DIR)/$@/data/ADL-Rundle-6.txt
-
-	sh test_eval.sh $@
-	mkdir -p produced/$@
-	cp $(MOT_DIR)/$@/*.png produced/$@/
-	cp $(MOT_DIR)/$@/*.pdf produced/$@/
+	sh full_eval.sh $@
 
 TRACKER:=hungarian_tracking kalman_tracking nn_tracking
 
