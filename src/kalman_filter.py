@@ -30,7 +30,7 @@ class KalmanFilter:
         self.x = np.dot(self.A, self.x) + np.dot(
             self.B, np.array([[self.u_x, self.u_y]]).T
         )
-        
+
         self.P = np.dot(np.dot(self.A, self.P), self.A.T) + self.Q
         self.time_state += self.dt
         return self.x
@@ -41,7 +41,7 @@ class KalmanFilter:
         S = self.R + self.H @ self.P @ self.H.T
         K = self.P @ self.H.T @ np.linalg.inv(S)
         self.x = self.x + K @ (z - self.H @ self.x)
-        
+
         self.P = (np.eye(self.P.shape[0]) - K @ self.H) @ self.P
         self.S = S
         self.K = K

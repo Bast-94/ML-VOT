@@ -25,11 +25,11 @@ class KalmanTracker(HungarianTracker):
             assert self.kalman_filter_map.get(track_id) is not None, print(
                 f"Kalman filter not initialized for track {track_id}"
             )
-            prediction = self.kalman_filter_map[track_id].predict()           
+            prediction = self.kalman_filter_map[track_id].predict()
             x, y = prediction[0, 0], prediction[1, 0]
-            
+
             wt, ht = track["bb_width"], track["bb_height"]
-            
+
             bbt = bb_with_dim_and_centroid(np.array([x, y]), wt, ht)
             for d, detection in enumerate(self.current_detections):
                 bbd = self.get_bounding_box(detection)
@@ -65,7 +65,6 @@ class KalmanTracker(HungarianTracker):
                 del self.kalman_filter_map[track_id]
 
     def apply_matching(self):
-        
         similarity_matrix = self.similarity_matrix()
         row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
 
@@ -78,9 +77,8 @@ class KalmanTracker(HungarianTracker):
             assert detection_centroid.shape == (2,), print(
                 f"center must be a 2d vector, got {detection_centroid.shape}"
             )
-            
+
             self.kalman_filter_map[track_id].update(detection_centroid)
-            
-        
+
         self.update_detection()
         self.clean_kalman_filter_map()
