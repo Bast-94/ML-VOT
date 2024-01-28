@@ -27,12 +27,16 @@ kalman_tracking:
 hungarian_tracking:
 	python main.py -H --output $(RESULT_FILE)
 	sh full_eval.sh $@
+nn_tracking:
+	python main.py -N --output $(RESULT_FILE)
+	sh full_eval.sh $@
 
 TRACKER:=hungarian_tracking kalman_tracking nn_tracking
 
 
 
-track_eval: download kalman_tracking hungarian_tracking
+track_eval: download kalman_tracking hungarian_tracking nn_tracking
+	
 	
 
 
