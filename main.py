@@ -17,6 +17,7 @@ from src.kalman_tracker import KalmanTracker
 from src.nn_tracker import NNTracker
 from src.parsers import get_track_args
 from src.tracker import Tracker
+import pandas as pd
 from src.utils import load_det_file
 from src.video_generator import generate_video
 
@@ -56,6 +57,12 @@ elif args.nn:
     tracker = NNTracker(config.DET_FILE, img_file_list)
 else:
     tracker = Tracker(config.DET_FILE, img_file_list)
+    result_df = tracker.det_df.copy()
+    for row in result_df.index:
+        result_df.loc[row, 'id'] = tracker.cur_id
+        tracker.cur_id += 1
+    pd.DataFrame(result_df).to_csv('produced/ADL-Rundle-6.txt', index=False, header=True)
+    
 
 
 tracker.print_info()

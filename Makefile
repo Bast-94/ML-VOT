@@ -4,9 +4,7 @@ run:
 	python main.py -H --output produced/hungarian_tracking.csv --video produced/hungarian_tracking.avi
 	python main.py -N --output produced/nn_tracking.csv --video produced/nn_tracking.avi
 
-hungarian:
-	python main.py -Ha --output produced/h_tracking.csv
-	diff produced/h_tracking.csv produced/h_tracking_ref.csv
+
 
 RESULT_FILE=produced/ADL-Rundle-6.txt
 DEST_FILE=TrackEval/data/trackers/mot_challenge/MOT15-train/MyTracker/data/ADL-Rundle-6.txt
@@ -37,10 +35,6 @@ TRACKER:=hungarian_tracking kalman_tracking nn_tracking
 
 track_eval: download kalman_tracking hungarian_tracking nn_tracking
 	
-	
-
-
-
 full_check: tracker hungarian
 
 test_kalman:
