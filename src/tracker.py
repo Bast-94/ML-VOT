@@ -24,11 +24,8 @@ class Tracker:
         self.current_tracks = []
         self.current_detections = []
 
-    def print_info(self):
+    def print_info(self) -> None:
         print(f"Simple Tracker with threshold {self.threshold}")
-
-    def get_frame2(self, n_frame: int):
-        return self.det_df[self.result_df.frame == n_frame]
 
     # same method as get_frame, but with different return type
     def get_frame(self, n_frame: int) -> list[dict[str, Any]]:
@@ -43,8 +40,7 @@ class Tracker:
             line_dict["bb_height"],
         )
 
-
-    def apply_matching(self):
+    def apply_matching(self) -> None:
         for track in self.current_tracks:
             best_iou = 0
             for detection in self.current_detections:
@@ -55,14 +51,13 @@ class Tracker:
                     track["id"] = self.cur_id
                     self.cur_id += 1
                 if iou_score >= self.threshold and iou_score > best_iou:
-                    
                     detection["id"] = track["id"]
                     best_iou = iou_score
 
-    def next_frame(self):
+    def next_frame(self) -> None:
         self.frame_idx += 1
 
-    def init_first_frame(self):
+    def init_first_frame(self) -> None:
         assert self.frame_idx == 1, print("First frame must be 1")
         self.current_tracks = self.get_frame(self.frame_idx)
         self.current_detections = self.get_frame(self.frame_idx + 1)
@@ -70,14 +65,14 @@ class Tracker:
             track["id"] = self.cur_id
             self.cur_id += 1
 
-    def write_track_to_result(self):
+    def write_track_to_result(self) -> None:
         self.result_df = pd.concat([self.result_df, pd.DataFrame(self.current_tracks)])
 
-    def update_track_and_detection(self):
+    def update_track_and_detection(self) -> None:
         self.current_tracks = self.current_detections
         self.current_detections = self.get_frame(self.frame_idx + 1)
 
-    def track(self, output_csv: str):
+    def track(self, output_csv: str) -> None:
         print("Tracking")
         self.result_df = pd.DataFrame(columns=self.det_df.columns)
         self.init_first_frame()
@@ -90,5 +85,5 @@ class Tracker:
         self.result_df.to_csv(output_csv, index=False)
         print(f"Tracking done, result saved in {output_csv}")
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        self.track(*args, **kwds)
+    def __call__(self, output_csv: str) -> Any:
+        self.track(output_csv)

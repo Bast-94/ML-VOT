@@ -4,6 +4,7 @@ from glob import glob
 
 import cv2
 import numpy as np
+import termcolor
 from scipy.optimize import linear_sum_assignment
 
 from src.config_manager import ConfigManager
@@ -13,7 +14,7 @@ from src.parsers import get_track_args
 from src.tracker import Tracker
 from src.utils import load_det_file
 from src.video_generator import generate_video
-import termcolor
+
 config = ConfigManager("config/config.yml")
 
 args = get_track_args()

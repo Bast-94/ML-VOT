@@ -31,9 +31,8 @@ class HungarianTracker(Tracker):
             if detection["id"] == -1:
                 detection["id"] = self.cur_id
                 self.cur_id += 1
-        
+
     def apply_matching(self):
-        
         similarity_matrix = self.similarity_matrix()
         row_ind, col_ind = linear_sum_assignment(1 - similarity_matrix)
         for row_idx, col_idx in zip(row_ind, col_ind):
