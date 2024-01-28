@@ -80,8 +80,6 @@ class Tracker:
             self.cur_id += 1
 
     def write_track_to_result(self) -> None:
-        # check that id is not twice in current_tracks
-        # check that tracks keys are the same as frame_keys
         for track in self.current_tracks:
             assert track["id"] != -1, print("Track id must be != -1")
             assert len(track.keys()) == len(self.frame_keys), print(track.keys())
@@ -102,6 +100,8 @@ class Tracker:
         self.result_df = pd.DataFrame(columns=self.det_df.columns)
         self.init_first_frame()
         for _ in tqdm(self.img_file_list):
+            if(self.current_detections == []):
+                break
             self.apply_matching()
             self.write_track_to_result()
             self.update_track_and_detection()
