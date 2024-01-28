@@ -6,9 +6,13 @@ import cv2
 import numpy as np
 import termcolor
 from scipy.optimize import linear_sum_assignment
+from torchvision import transforms
 
+from src.box_encoder import BoxEncoder
 from src.config_manager import ConfigManager
 from src.hungarian_tracker import HungarianTracker
+from src.iou import (BoundingBox, bb_to_np, bb_with_dim_and_centroid, centroid,
+                     intersection_box, iou)
 from src.kalman_tracker import KalmanTracker
 from src.nn_tracker import NNTracker
 from src.parsers import get_track_args
@@ -19,20 +23,25 @@ from src.video_generator import generate_video
 config = ConfigManager("config/config.yml")
 
 args = get_track_args()
-
+IMG_FILE_LIST = glob(os.path.join(config.IMG_DIR, "*.jpg"))
 if args.commands == "test":
     print("Test")
-    det_df = load_det_file(config.DET_FILE)
-    frame_data = det_df[det_df.frame == 1]
-    # convert frame_data to list of dict
-    frame_data = frame_data.to_dict("records")
-    print(frame_data)
+    import torch
+    import torch.nn.functional as F
+    
+    nn_tracker = NNTracker(config.DET_FILE, IMG_FILE_LIST)
+    nn_tracker.print_info()
+    nn_tracker.init_first_frame()
+    encoded = nn_tracker.encode_frame(nn_tracker.current_tracks)
+    
+    print(nn_tracker.similarity_matrix())
+
     sys.exit(0)
 
 nb_frame = args.n_frame
 save_video = args.video
 output_csv = args.output_csv
-IMG_FILE_LIST = glob(os.path.join(config.IMG_DIR, "*.jpg"))
+
 if args.all:
     nb_frame = len(IMG_FILE_LIST)
 img_file_list = IMG_FILE_LIST[:nb_frame]

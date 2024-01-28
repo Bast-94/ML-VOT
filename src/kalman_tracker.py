@@ -66,7 +66,9 @@ class KalmanTracker(HungarianTracker):
 
     def apply_matching(self):
         similarity_matrix = self.similarity_matrix()
-        match_track_indices, match_det_indices = linear_sum_assignment(1 - similarity_matrix)
+        match_track_indices, match_det_indices = linear_sum_assignment(
+            1 - similarity_matrix
+        )
 
         for row_idx, col_idx in zip(match_track_indices, match_det_indices):
             track_id = self.current_tracks[row_idx]["id"]
@@ -80,6 +82,6 @@ class KalmanTracker(HungarianTracker):
 
             self.kalman_filter_map[track_id].update(detection_centroid)
         # check that id in track are unique
-        
+
         self.update_detection()
         self.clean_kalman_filter_map()
