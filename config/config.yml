@@ -2,7 +2,7 @@ BOUNDING_BOX_DIR: ADL-Rundle-6/bounding_boxes
 DATA_DIR: ADL-Rundle-6
 DET_FILE: ADL-Rundle-6/det/det.txt
 IMG_DIR: ADL-Rundle-6/img1
-OUTPUT_CSV: produced/tracking.csv
+OUTPUT_CSV: produced/ADL-Rundle-6.txt
 OUTPUT_DIR: produced
 OUTPUT_VIDEO: produced/output.avi
 config: null
