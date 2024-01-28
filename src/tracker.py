@@ -34,16 +34,8 @@ class Tracker:
     def get_frame(self, n_frame: int) -> list[dict[str, Any]]:
         return self.det_df[self.det_df["frame"] == n_frame].to_dict("records")
 
-    def get_bounding_box(self, frame_data: pd.DataFrame | dict, row: int):
-        return BoundingBox(
-            frame_data["bb_left"][row],
-            frame_data["bb_top"][row],
-            frame_data["bb_width"][row],
-            frame_data["bb_height"][row],
-        )
-
     @staticmethod
-    def get_bounding_box2(line_dict: dict[str, Any]) -> BoundingBox:
+    def get_bounding_box(line_dict: dict[str, Any]) -> BoundingBox:
         return BoundingBox(
             line_dict["bb_left"],
             line_dict["bb_top"],
@@ -51,32 +43,13 @@ class Tracker:
             line_dict["bb_height"],
         )
 
-    def apply_matching2(self):
-        threshold = self.threshold
-        tracks = self.current_tracks
-        detections = self.current_detections
-        for row1 in tracks.index:
-            best_iou = 0
-            for row2 in detections.index:
-                bb1 = self.get_bounding_box(tracks, row1)
-                bb2 = self.get_bounding_box(detections, row2)
-                iou_score = iou(bb1, bb2)
-
-                if tracks.loc[row1, "id"] == -1:
-                    tracks.loc[row1, "id"] = self.cur_id
-                    self.cur_id += 1
-                if iou_score >= threshold and iou_score > best_iou:
-                    detections.loc[row2, "id"] = tracks.loc[row1, "id"]
-                    best_iou = iou_score
-        self.current_tracks = tracks
-        self.current_detections = detections
 
     def apply_matching(self):
         for track in self.current_tracks:
             best_iou = 0
             for detection in self.current_detections:
-                bb1 = self.get_bounding_box2(track)
-                bb2 = self.get_bounding_box2(detection)
+                bb1 = self.get_bounding_box(track)
+                bb2 = self.get_bounding_box(detection)
                 iou_score = iou(bb1, bb2)
                 if track["id"] == -1:
                     track["id"] = self.cur_id

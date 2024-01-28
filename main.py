@@ -45,7 +45,7 @@ else:
 
 
 tracker.print_info()
-tracker.track(config.OUTPUT_CSV)
+tracker(config.OUTPUT_CSV)
 print(termcolor.colored("Done", "green"))
 
 if save_video:

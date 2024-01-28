@@ -20,8 +20,8 @@ class HungarianTracker(Tracker):
         )
         for t, track in enumerate(self.current_tracks):
             for d, detection in enumerate(self.current_detections):
-                bbt = self.get_bounding_box2(track)
-                bbd = self.get_bounding_box2(detection)
+                bbt = self.get_bounding_box(track)
+                bbd = self.get_bounding_box(detection)
                 similarity_matrix[t, d] = iou(bbt, bbd)
 
         return similarity_matrix
